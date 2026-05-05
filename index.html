@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GdO Solar | Energía solar para tu hogar</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('3EcIpg5RFzhSFqFuF');</script>
   <style>
     :root {
       --green: #13a76b;
@@ -3031,6 +3033,20 @@ const videoHTML = profileVideos[normalizedKey]
 
           state.savedToSupabase = true;
           if (saveStatus) saveStatus.textContent = '✅ Perfil guardado correctamente.';
+
+          // Enviar correo de gracias si el usuario dejó su email
+          if (contact.email) {
+            const templateParams = {
+              to_name: contact.name || 'visitante',
+              to_email: contact.email,
+            };
+            console.log('📧 Enviando correo a:', contact.email, templateParams);
+            emailjs.send('service_x2uwy1b', 'template_zydmo9h', templateParams)
+              .then(() => console.log('✅ Correo enviado correctamente'))
+              .catch(err => console.error('❌ EmailJS error:', JSON.stringify(err)));
+          } else {
+            console.warn('⚠️ No se envió correo: el usuario no dejó email');
+          }
         } catch (error) {
           console.error('Error guardando en Supabase:', error);
           if (saveStatus) saveStatus.textContent = '⚠️ No se pudo guardar en Supabase. Revisa URL, anon key, tablas y policies.';
